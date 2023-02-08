@@ -1,0 +1,41 @@
+<odoo>
+    <data>
+
+        <record id="warehouse_stage_form" model="ir.ui.view">
+            <field name="name">Warehouse Stage</field>
+            <field name="model">warehouse.stage</field>
+            <field name="arch" type="xml">
+                <form string="Warehouse Stage">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_warehouse_stage" model="ir.actions.act_window">
+            <field name="name">Warehouse Stage</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">warehouse.stage</field>
+            <field name="view_mode">form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    <!-- Add Text Here -->
+                </p>
+                <p>
+                    <!-- More details about what a user can do with this object will be OK -->
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_warehouse_rental_setting" name="Configuration"
+                  parent="warehouse_rental_app.menu_warehouse_rental_root" sequence="100"/>
+        <menuitem id="menu_warehouse_stage_view" name="Warehouse Stage" parent="menu_warehouse_rental_setting"
+                  action="action_warehouse_stage" sequence="10"/>
+    </data>
+</odoo>
