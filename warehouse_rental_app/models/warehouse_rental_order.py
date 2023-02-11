@@ -9,7 +9,7 @@ class WarehouseRentalOrder(models.Model):
 
     name = fields.Char(required=True)
     warehouse_stage_id = fields.Many2one(comodel_name="warehouse.stage", required=True)
-    date = fields.Date()
+    date = fields.Datetime(related='sale_id.date_order', store=True)
     state = fields.Selection(selection=[
         ('pending', 'Pending'),
         ('done', 'Done'),
@@ -24,15 +24,31 @@ class WarehouseRentalOrder(models.Model):
     invoice_id = fields.Many2one(comodel_name="account.move", readonly=True)
 
     def create_invoice(self):
-        self._create_invoice()
+        move = self._create_invoice()
+        self.invoice_id = move
         self.state = 'done'
+        self.sale_id.state = 'sale'
         return True
 
     def _create_invoice(self):
-        return
-        invoice = self.env['account.move']
-        values = self.prepare_invoice_vals()
-        invoice.create(values)
+        move = self.env['account.move']
+        values = self.prepare_invoice()
+        move = move.create(values)
+        return move
 
-    def prepare_invoice_vals(self):
-        return {}
+    def prepare_invoice(self):
+        lines = []
+        for line in self.order_line_ids:
+            lines.append((0, 0, {
+                'product_id': line.product_id.id,
+                'name': line.name,
+                'price_unit': line.price_unit,
+                'quantity': line.product_uom_qty,
+            }))
+        meta = {
+            'move_type': 'out_invoice',
+            'invoice_date': self.date.date(),
+            'partner_id': self.partner_id.id,
+            'invoice_line_ids': lines,
+        }
+        return meta
