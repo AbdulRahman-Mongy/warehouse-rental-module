@@ -42,3 +42,16 @@ class SaleOrder(models.Model):
                 'sale_id': sale.id,
                 'warehouse_stage_id': sale.order_line.mapped('product_id')[-1].warehouse_stage_id.id,
             }
+
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    rent_from = fields.Datetime()
+    rent_to = fields.Datetime()
+
+    @api.onchange('rent_from', 'rent_to')
+    def onchange_rental_dates(self):
+        for sale in self:
+            if sale.product_id and sale.product_id.type == 'service' and sale.rent_from and sale.rent_to and sale.rent_to >= sale.rent_from:
+                sale.product_uom_qty = (sale.rent_to - sale.rent_from).days

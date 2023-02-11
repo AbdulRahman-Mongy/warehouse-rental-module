@@ -3,7 +3,7 @@ from odoo.exceptions import UserError
 
 
 class Product(models.Model):
-    _inherit = 'product.product'
+    _inherit = 'product.template'
 
     warehouse_stage_id = fields.Many2one(comodel_name="warehouse.stage")
 

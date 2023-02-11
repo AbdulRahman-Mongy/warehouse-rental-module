@@ -22,6 +22,7 @@
         'views/wro_views.xml',
         'views/warehouse_stage.xml',
         'views/product.xml',
+        'views/sale_order.xml',
     ],
 
     'installable': True,

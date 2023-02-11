@@ -9,7 +9,7 @@ class WarehouseRentalOrder(models.Model):
 
     name = fields.Char(required=True)
     warehouse_stage_id = fields.Many2one(comodel_name="warehouse.stage", required=True)
-    date = fields.Date()
+    date = fields.Datetime(related='sale_id.date_order', store=True)
     state = fields.Selection(selection=[
         ('pending', 'Pending'),
         ('done', 'Done'),
@@ -47,6 +47,7 @@ class WarehouseRentalOrder(models.Model):
             }))
         meta = {
             'move_type': 'out_invoice',
+            'invoice_date': self.date.date(),
             'partner_id': self.partner_id.id,
             'invoice_line_ids': lines,
         }

@@ -33,7 +33,9 @@
                                         <field name="company_id" invisible="1"/>
                                         <field name="product_id"/>
                                         <field name="name"/>
-                                        <field name="product_uom_qty"/>
+                                        <field name="product_uom_qty" readonly="1" force_save="1"/>
+                                        <field name="rent_from"/>
+                                        <field name="rent_to"/>
                                         <field name="price_unit" readonly="0"/>
                                         <field name="price_subtotal"/>
                                     </tree>

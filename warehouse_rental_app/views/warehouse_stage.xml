@@ -17,12 +17,22 @@
             </field>
         </record>
 
+        <record id="warehouse_stage_tree" model="ir.ui.view">
+            <field name="name">Warehouse Stage List</field>
+            <field name="model">warehouse.stage</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
 
         <record id="action_warehouse_stage" model="ir.actions.act_window">
             <field name="name">Warehouse Stage</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">warehouse.stage</field>
-            <field name="view_mode">form</field>
+            <field name="view_mode">tree,form</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
                     <!-- Add Text Here -->
