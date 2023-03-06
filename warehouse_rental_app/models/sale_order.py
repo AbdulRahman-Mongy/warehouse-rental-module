@@ -1,4 +1,5 @@
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import *
 
 
 class SaleOrder(models.Model):
@@ -17,6 +18,7 @@ class SaleOrder(models.Model):
         for sale in self:
             if not sale.should_create_wro():
                 return False
+            sale.validate_available_shelves()
             wro = self.env['warehouse.rental.order']
             values = sale.prepare_wro_vals()
             wro.create(values)
@@ -42,6 +44,18 @@ class SaleOrder(models.Model):
                 'sale_id': sale.id,
                 'warehouse_stage_id': sale.order_line.mapped('product_id')[-1].warehouse_stage_id.id,
             }
+
+    def validate_available_shelves(self):
+        for line in self.order_line:
+            so_lines = self.env['sale.order.line'].search([
+                ('id', '!=', line.id),
+                ('product_id', '=', line.product_id.id),
+                ('rent_to', '>', line.rent_from),
+                ('rent_from', '<=', line.rent_to),
+            ], limit=1)
+            if so_lines:
+                raise ValidationError(_(f"{line.product_id.display_name} is Already Rented From "
+                                        f"{so_lines.rent_from} To {so_lines.rent_to}."))
 
 
 class SaleOrderLine(models.Model):

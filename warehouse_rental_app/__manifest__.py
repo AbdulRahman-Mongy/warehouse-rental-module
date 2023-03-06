@@ -23,6 +23,7 @@
         'views/warehouse_stage.xml',
         'views/product.xml',
         'views/sale_order.xml',
+        'data/ir_crons.xml',
     ],
 
     'installable': True,

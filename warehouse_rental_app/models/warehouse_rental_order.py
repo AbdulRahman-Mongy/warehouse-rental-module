@@ -43,6 +43,7 @@ class WarehouseRentalOrder(models.Model):
                 'product_id': line.product_id.id,
                 'name': line.name,
                 'price_unit': line.price_unit,
+                'product_uom_id': line.product_uom.id,
                 'quantity': line.product_uom_qty,
             }))
         meta = {
@@ -52,3 +53,13 @@ class WarehouseRentalOrder(models.Model):
             'invoice_line_ids': lines,
         }
         return meta
+
+    def _auto_mark_stages_as_done(self):
+        done_stage = self.env['warehouse.stage'].search([('done_stage', '=', True)], limit=1)
+        if not done_stage:
+            return
+        rentals = self.env['warehouse.rental.order'].search([('warehouse_stage_id', '!=', done_stage.id)])
+        for ro in rentals:
+            done_lines = ro.order_line_ids.filtered(lambda line: line.rent_to and line.rent_to < fields.Datetime.now())
+            if len(done_lines) == len(ro.order_line_ids):
+                ro.warehouse_stage_id = done_stage
